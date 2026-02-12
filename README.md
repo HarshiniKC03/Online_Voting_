@@ -89,7 +89,7 @@ PORT=3000
 🛠️ Installation & Setup
 
 1️⃣ Clone the repository
-git clone https://github.com/YOUR_USERNAME/voting-app.git
+git clone https://github.com/HarshiniKC03/Online_Voting_.git
 cd voting-app
 
 2️⃣ Install dependencies
