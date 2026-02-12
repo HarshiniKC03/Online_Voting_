@@ -33,6 +33,8 @@ Admin can monitor vote counts live.
 
 🔹 Result Management
 Admin can view results anytime.
+Public can view results only after deadline.
+Vote count displayed per candidate
 
 🏗️ Tech Stack
 
@@ -118,8 +120,7 @@ Secure TEE-based counting
 OTP verification
 
 👨‍💻 Author
-Preetham
+Harshini K C
 Full Stack Developer
 Secure Systems Enthusiast
-Public can view results only after deadline.
-Vote count displayed per candidate
+
