@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Election Results</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="results-page">
+  <header>
+    <div class="logo">
+      <img src="images/logo.avif" alt="App Logo">
+      <h1>Voting App</h1>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="home.html">Home</a></li>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="vote.html">Vote</a></li>
+        <li><a href="results.html" class="active">Results</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="results-container">
+    <h1 class="results-title">📊 Election Results</h1>
+    <p>Enter your phone number and election code to view results.</p>
+    
+    <div class="results-inputs">
+      <input type="text" id="phone" placeholder="Your Phone Number">
+      <input type="text" id="code" placeholder="Election Code">
+   </div>
+
+    <button onclick="redirectToResults()">Load Results</button>
+    <p id="msg"></p>
+    <button class="back-home-btn" onclick="window.location.href='dashboard.html'">⬅ Back</button>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 Voting App. All rights reserved.</p>
+  </footer>
+
+  <script>
+    function redirectToResults() {
+      const phone = document.getElementById('phone').value.trim();
+      const code = document.getElementById('code').value.trim();
+      const msg = document.getElementById('msg');
+
+      if (!phone || !code) {
+        msg.innerText = "⚠️ Please fill both fields.";
+        return;
+      }
+
+      // Redirect to displayResults.html with query parameters
+      window.location.href = `displayResults.html?phone=${encodeURIComponent(phone)}&code=${encodeURIComponent(code)}`;
+    }
+  </script>
+</body>
+</html>

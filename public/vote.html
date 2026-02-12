@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Vote</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="results-page">
+   <header>
+    <div class="logo">
+      <img src="images/logo.avif" alt="App Logo">
+      <h1>Voting App</h1>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="home.html">Home</a></li>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="vote.html">Vote</a></li>
+        <li><a href="results.html" class="active">Results</a></li>
+      </ul>
+    </nav>
+  </header>
+  <div class="form-container">
+    <h2>Vote in Election</h2>
+    <input type="text" id="voterPhone" placeholder="Your Phone Number">
+    <input type="text" id="electionCode" placeholder="Election Code">
+    <button onclick="loadCandidates()">Load Candidates</button>
+    <div id="countdown"></div>
+    <div id="candidateList"></div>
+    <p id="msg"></p>
+    <button class="back-home-btn" onclick="window.location.href='dashboard.html'">⬅ Back</button>
+  </div>
+  <footer>
+    <p>&copy; 2025 Voting App. All rights reserved.</p>
+  </footer>
+
+  <script>
+    const voterPhone = document.getElementById("voterPhone");
+    const electionCode = document.getElementById("electionCode");
+    const candidateList = document.getElementById("candidateList");
+    const msg = document.getElementById("msg");
+    const countdown = document.getElementById("countdown");
+
+    async function loadCandidates() {
+      const phone = voterPhone.value.trim(),
+            code = electionCode.value.trim();
+
+      if (!phone || !code) return msg.innerText = "⚠️ Please enter both fields.";
+
+      // Check if already voted
+      const voteCheck = await fetch('/api/elections/check-vote', {
+        method: 'POST', 
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ phoneNumber: phone, electionCode: code })
+      });
+      const status = await voteCheck.json();
+      if (status.alreadyVoted) return msg.innerText = "❌ You have already voted.";
+
+      // Get election data
+      const res = await fetch(`/api/elections/${code}`);
+      const data = await res.json();
+      if (!data.candidates) return msg.innerText = "❌ Election not found.";
+
+      const now = new Date();
+      const start = new Date(data.startTime);
+      const end = new Date(data.deadline);
+
+      // Voting has not started yet
+      if (now < start) {
+        candidateList.innerHTML = "";
+        return msg.innerText = "⛔ Voting has NOT started yet.";
+      }
+
+      // Voting ended
+      if (now > end) {
+        candidateList.innerHTML = "";
+        return msg.innerText = "❌ Voting has ENDED.";
+      }
+
+      // Voting active → show candidates
+      startCountdown(end);
+      msg.innerText = "";
+      candidateList.innerHTML = "";
+
+      data.candidates.forEach(c => {
+        const btn = document.createElement("button");
+        btn.innerText = `${c.name} ${c.symbol}`;
+        btn.onclick = () => voteCandidate(phone, code, c.name);
+        candidateList.appendChild(btn);
+      });
+    }
+
+    async function voteCandidate(phone, code, name) {
+      const res = await fetch('/api/elections/vote', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ phoneNumber: phone, electionCode: code, candidateName: name })
+      });
+
+      const r = await res.json();
+      if (r.success) {
+        msg.innerText = "✅ Vote submitted! Redirecting...";
+        setTimeout(() => {
+          window.location.href = "dashboard.html";
+        }, 1500);
+      } else {
+        msg.innerText = "❌ " + r.message;
+      }
+    }
+
+    function startCountdown(deadline) {
+      const timer = setInterval(() => {
+        const diff = deadline - new Date();
+        if (diff <= 0) {
+          countdown.innerText = "Voting closed.";
+          clearInterval(timer);
+          return;
+        }
+        const days = Math.floor(diff / (1000*60*60*24));
+        const hrs = Math.floor((diff/1000/60/60)%24);
+        const mins = Math.floor((diff/1000/60)%60);
+        const secs = Math.floor((diff/1000)%60);
+        countdown.innerText = `⏳ Time left: ${days}d ${hrs}h ${mins}m ${secs}s`;
+      }, 1000);
+    }
+  </script>
+</body>
+</html>

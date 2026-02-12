@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Create Election</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  
+     <header>
+    <div class="logo">
+      <img src="images/logo.avif" alt="App Logo">
+      <h1>Voting App</h1>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="home.html">Home</a></li>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="vote.html">Vote</a></li>
+        <li><a href="results.html" class="active">Results</a></li>
+      </ul>
+    </nav>
+  </header>
+  <div class="form-container">
+    <h2>Create Election</h2>
+    <form id="electionForm">
+      <input type="text" placeholder="Phone Number" id="adminPhone" required>
+      <input type="text" placeholder="Election Title" id="title" required>
+      <label class="input-label">Start Time</label>
+       <input type="datetime-local" id="startTime" required>
+       <label class="input-label">End Time</label>
+       <input type="datetime-local" id="deadline" required>
+      <button type="submit">Next</button>
+    </form>
+    <button class="back-home-btn" onclick="window.location.href='dashboard.html'">⬅ Back</button>
+  </div>
+   <footer>
+    <p>&copy; 2025 Voting App. All rights reserved.</p>
+  </footer>
+ <script>
+
+function autoClosePicker(input) {
+  input.addEventListener("input", () => {
+    setTimeout(() => {
+      input.blur();
+    }, 100);
+  });
+
+  input.addEventListener("change", () => {
+    setTimeout(() => {
+      input.blur();
+    }, 100);
+  });
+}
+
+autoClosePicker(document.getElementById("startTime"));
+autoClosePicker(document.getElementById("deadline"));  // ✅ fixed
+
+document.getElementById('electionForm').onsubmit = function(e) {
+  e.preventDefault();
+
+  const electionData = {
+    adminPhone: document.getElementById('adminPhone').value,
+    title: document.getElementById('title').value,
+    startTime: document.getElementById('startTime').value,
+    deadline: document.getElementById('deadline').value
+  };
+
+  localStorage.setItem('electionData', JSON.stringify(electionData));
+  window.location.href = 'candidates.html'; // safer version
+};
+
+</script>
+
+</body>
+</html>

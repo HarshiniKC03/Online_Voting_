@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Display Results</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body class="results-page">
+  <header>
+    <div class="logo">
+      <img src="images/logo.avif" alt="App Logo">
+      <h1>Voting App</h1>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="home.html">Home</a></li>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="vote.html">Vote</a></li>
+        <li><a href="results.html" class="active">Results</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="results-container">
+    <h1 class="results-title">Election Results</h1>
+    <h3 id="winner"></h3>
+    <canvas id="resultChart"></canvas>
+    <button class="back-home-btn" onclick="window.location.href='results.html'">⬅ Back</button>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 Voting App. All rights reserved.</p>
+  </footer>
+
+  <script>
+    let chartInstance = null;
+
+    async function loadResults() {
+      const params = new URLSearchParams(window.location.search);
+      const phone = params.get('phone');
+      const code = params.get('code');
+      const winnerEl = document.getElementById("winner");
+
+      try {
+        const res = await fetch("/api/elections/results", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ phoneNumber: phone, electionCode: code })
+        });
+
+        const data = await res.json();
+
+        if (!Array.isArray(data) || data.length === 0) {
+          winnerEl.innerText = "❌ No results found.";
+          return;
+        }
+
+        const winner = data.reduce((a, b) => (b.votes > a.votes ? b : a));
+        winnerEl.innerText = `🏆 Winner: ${winner.name} ${winner.symbol || ""} — ${winner.votes} votes`;
+
+        const ctx = document.getElementById("resultChart").getContext("2d");
+        if (chartInstance) chartInstance.destroy();
+
+        chartInstance = new Chart(ctx, {
+          type: "bar",
+          data: {
+            labels: data.map(c => c.name),
+            datasets: [{
+              label: "Votes",
+              data: data.map(c => c.votes),
+              backgroundColor: "rgba(0, 255, 204, 0.7)",
+              borderColor: "#00ffcc",
+              borderWidth: 2
+            }]
+          },
+          options: {
+            responsive: true,
+            scales: {
+              y: { beginAtZero: true, ticks: { color: "#fff" } },
+              x: { ticks: { color: "#fff" } }
+            },
+            plugins: {
+              legend: { labels: { color: "#00ffcc" } },
+              title: {
+                display: true,
+                text: "Vote Distribution",
+                color: "#00ffcc",
+                font: { size: 18, weight: "bold" }
+              }
+            }
+          }
+        });
+      } catch (error) {
+        console.error(error);
+        winnerEl.innerText = "❌ Error loading results.";
+      }
+    }
+
+    loadResults();
+  </script>
+</body>
+</html>
