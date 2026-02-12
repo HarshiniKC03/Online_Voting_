@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Add Candidates</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="dashboard-page">
+  <div class="form-container">
+    <h2>Add Candidates</h2>
+    <input type="text" id="candName" placeholder="Candidate Name">
+    <input type="text" id="candSymbol" placeholder="Symbol (e.g. 🐘)">
+    <button onclick="addCandidate()">Add Candidate</button>
+
+    <table>
+      <thead>
+        <tr><th>Name</th><th>Symbol</th><th>Action</th></tr>
+      </thead>
+      <tbody id="candidateTableBody"></tbody>
+    </table>
+
+    <button onclick="submitElection()">Submit Election</button>
+    <button class="back-home-btn" onclick="window.location.href='dashboard.html'">⬅ Back</button>
+    <p id="msg"></p>
+  </div>
+
+  <script>
+    const candidates = [];
+    function addCandidate() {
+      const name = document.getElementById("candName").value.trim();
+      const symbol = document.getElementById("candSymbol").value.trim();
+      if (!name || !symbol) return alert("Both fields are required.");
+      candidates.push({ name, symbol });
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${name}</td>
+        <td>${symbol}</td>
+        <td><button onclick="removeCandidate(this)">Remove</button></td>
+      `;
+      document.getElementById("candidateTableBody").appendChild(row);
+      document.getElementById("candName").value = "";
+      document.getElementById("candSymbol").value = "";
+    }
+
+    function removeCandidate(btn) {
+      const row = btn.closest("tr");
+      const index = row.rowIndex - 1;
+      candidates.splice(index, 1);
+      row.remove();
+    }
+
+    async function submitElection() {
+      const electionData = JSON.parse(localStorage.getItem("electionData"));
+      if (!electionData || candidates.length === 0)
+        return alert("Missing election data or no candidates added.");
+
+      const payload = { ...electionData, candidates };
+      try {
+        const res = await fetch('/api/elections/create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const result = await res.json();
+      if (result.code) {
+  const msgBox = document.getElementById("msg");
+
+  msgBox.innerHTML = `
+    ✅ <strong>Election created!</strong><br><br>
+    <strong>Election Code:</strong>
+    <span style="font-size:1.3rem; color:#00ffcc;">${result.code}</span><br><br>
+    <button onclick="copyCode('${result.code}')">📋 Copy & Continue</button>
+  `;
+
+  // 🔥 SCROLL UP TO CODE
+  msgBox.scrollIntoView({
+    behavior: "smooth",
+    block: "center"
+  });
+}
+ else document.getElementById("msg").innerText = "Failed to create election.";
+      } catch {
+        document.getElementById("msg").innerText = "❌ Server error.";
+      }
+    }
+
+    function copyCode(code) {
+      navigator.clipboard.writeText(code)
+        .then(() => { alert("Code copied!"); window.location.href = "dashboard.html"; });
+    }
+  </script>
+</body>
+</html>
