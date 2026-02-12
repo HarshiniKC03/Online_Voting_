@@ -52,19 +52,32 @@ MongoDB Atlas
 Mongoose
 
 📂 Project Structure
-voting-app/
+Secure-Online-Voting-System
+│
+├── public
+│   ├── home.html
+│   ├── create-election.html
+│   ├── add-candidates.html
+│   ├── vote.html
+│   ├── results.html
+│   ├── styles.css
+│   ├── script.js
+│   └── images/
+│
+├── routes
+│   ├── electionRoutes.js
+│   ├── voteRoutes.js
+│   └── resultRoutes.js
+│
+├── models
+│   ├── Election.js
+│   ├── Candidate.js
+│   └── Voter.js
 │
 ├── server.js
 ├── package.json
-├── .gitignore
-├── routes/
-├── models/
-├── public/
-│   ├── home.html
-│   ├── create.html
-│   ├── vote.html
-│   ├── results.html
-│   └── styles.css
+├── README.md
+│
 └── .env (not pushed to GitHub)
 
 🔐 Environment Variables
