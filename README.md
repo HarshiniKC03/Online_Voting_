@@ -33,5 +33,93 @@ Admin can monitor vote counts live.
 
 🔹 Result Management
 Admin can view results anytime.
+
+🏗️ Tech Stack
+
+Frontend:
+HTML
+CSS
+JavaScript
+
+Backend:
+Node.js
+Express.js
+
+Database:
+MongoDB Atlas
+Mongoose
+
+📂 Project Structure
+voting-app/
+│
+├── server.js
+├── package.json
+├── .gitignore
+├── routes/
+├── models/
+├── public/
+│   ├── home.html
+│   ├── create.html
+│   ├── vote.html
+│   ├── results.html
+│   └── styles.css
+└── .env (not pushed to GitHub)
+
+🔐 Environment Variables
+Create a .env file in the root directory:
+MONGO_URI=your_mongodb_connection_string
+PORT=3000
+⚠️ Make sure .env is added to .gitignore.
+
+🛠️ Installation & Setup
+
+1️⃣ Clone the repository
+git clone https://github.com/YOUR_USERNAME/voting-app.git
+cd voting-app
+
+2️⃣ Install dependencies
+npm install
+
+3️⃣ Create .env file
+
+4️⃣ Run the server
+node server.js
+
+Server will run on:
+http://localhost:3000
+
+🧠 How It Works
+Admin creates an election.
+System generates a unique election code.
+Admin adds candidates with symbols.
+
+Voters enter:
+Phone Number
+Election Code
+Each voter can vote only once.
+
+Results:
+Admin can view anytime.
+Public can view after deadline.
+
+🛡️ Security Features
+Environment variable protection
+No hardcoded credentials
+Unique election codes
+Vote duplication prevention
+Admin access restriction
+Countdown-based deadline enforcement
+
+📌 Future Enhancements
+Face biometric authentication
+Cancelable biometric templates
+Blockchain-based vote verification
+Secure TEE-based counting
+OTP verification
+
+👨‍💻 Author
+Preetham
+Full Stack Developer
+Secure Systems Enthusiast
 Public can view results only after deadline.
 Vote count displayed per candidate
